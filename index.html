@@ -649,8 +649,40 @@ document.getElementById('exp-go').addEventListener('click',function(){
     var rows=Object.entries(analisi).filter(function(e){var an=e[1];if(fs&&an.sitoKey!==fs)return false;if(da&&an.dataPrelievo&&an.dataPrelievo<da)return false;if(a&&an.dataPrelievo&&an.dataPrelievo>a)return false;return true;}).sort(function(a,b){return String(a[1].dataPrelievo).localeCompare(String(b[1].dataPrelievo));});
     if(!rows.length){toast('Nessun dato');return;}
     var allP=[...new Set(rows.flatMap(function(e){return Object.keys(e[1].parametri||{});}))].sort();
-    if(fmt==='csv'){var blob=new Blob(['\uFEFF'+[['Sito','Punto','Matrice','Data prelievo','Luogo'].concat(allP).join('\t')].concat(rows.map(function(e){var an=e[1];return[an.sito||'',an.punto||'',an.matrice||'',an.dataPrelievo||'',an.luogo||''].concat(allP.map(function(p){return(an.parametri||{})[p]||'';})).join('\t');})).join('\n')],{type:'text/csv;charset=utf-8'});var el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download='analisi_chimiche_STA.csv';el.click();toast('✓ CSV scaricato');}
-    else{var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;font-size:9pt}table{border-collapse:collapse;width:100%}th{background:#1a6fe0;color:#fff;padding:3pt 5pt;border:1px solid #888;font-size:8pt}td{padding:3pt 5pt;border:1px solid #ccc;font-size:8pt}tr:nth-child(even) td{background:#f0f4fb}</style></head><body><h2 style="font-family:Arial;font-size:11pt">Analisi chimiche – '+(rows[0][1].sito||'')+'</h2><p style="font-family:Arial;font-size:8pt;color:#555">STA Consulting S.r.l. – '+new Date().toLocaleDateString('it-IT')+'</p><table><thead><tr><th>Punto</th><th>Data prelievo</th>'+allP.map(function(p){return'<th>'+p+'</th>';}).join('')+'</tr></thead><tbody>'+rows.map(function(e){var an=e[1];return'<tr><td><b>'+(an.punto||'')+'</b></td><td>'+(an.dataPrelievo||'')+'</td>'+allP.map(function(p){return'<td>'+((an.parametri||{})[p]||'n.d.')+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table></body></html>';var el=document.createElement('a');el.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));el.download='analisi_chimiche_STA.html';el.click();toast('✓ HTML scaricato');}
+    // estrai unità dai nomi parametro (es. "Benzene (µg_l)" → "µg/l")
+    function extractUnit(p){var m=p.match(/\(([^)]+)\)\s*$/);return m?m[1].replace(/_/g,'/'):'';}
+    function extractName(p){return p.replace(/\s*\([^)]*\)\s*$/,'').trim();}
+    if(fmt==='csv'){
+      var r1=['Punto di Prelievo','Campione','Data di Prelievo'].concat(allP.map(extractName));
+      var r2=['','','u.m.'].concat(allP.map(extractUnit));
+      var r3=['','','Limiti di riferimento*'].concat(allP.map(function(){return'';}));
+      var dataRows=rows.map(function(e){var an=e[1];return[an.punto||'',an.codiceCampione||an.punto||'',an.dataPrelievo||''].concat(allP.map(function(p){return(an.parametri||{})[p]||'';}));});
+      var lines=[r1,r2,r3].concat(dataRows).map(function(r){return r.join('\t');}).join('\n');
+      var blob=new Blob(['\uFEFF'+lines],{type:'text/csv;charset=utf-8'});
+      var el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download='analisi_chimiche_STA.csv';el.click();toast('✓ CSV scaricato');
+    } else {
+      var sito=rows[0][1].sito||'';
+      var thStyle='background:#1a6fe0;color:#fff;padding:4pt 5pt;border:1px solid #888;font-size:8pt;text-align:center;white-space:nowrap;';
+      var tdStyle='padding:3pt 5pt;border:1px solid #ccc;font-size:8pt;text-align:center;';
+      var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:9pt}table{border-collapse:collapse}th,td{white-space:nowrap}.sup{font-weight:bold;color:#c00}.nd{color:#999}</style></head><body>'+
+        '<h2 style="font-size:11pt;margin-bottom:4pt">Risultati analisi chimiche – '+sito+'</h2>'+
+        '<p style="font-size:8pt;color:#555;margin-bottom:6pt">STA Consulting S.r.l. – '+new Date().toLocaleDateString('it-IT')+'</p>'+
+        '<table><thead>'+
+        '<tr><th style="'+thStyle+'">Punto di Prelievo</th><th style="'+thStyle+'">Campione</th><th style="'+thStyle+'">Data di Prelievo</th>'+allP.map(function(p){return'<th style="'+thStyle+'">'+extractName(p)+'</th>';}).join('')+'</tr>'+
+        '<tr><td style="'+tdStyle+'"></td><td style="'+tdStyle+'"></td><td style="'+tdStyle+'font-style:italic">u.m.</td>'+allP.map(function(p){return'<td style="'+tdStyle+'font-style:italic">'+extractUnit(p)+'</td>';}).join('')+'</tr>'+
+        '<tr><td style="'+tdStyle+'"></td><td style="'+tdStyle+'"></td><td style="'+tdStyle+'font-style:italic">Limiti di riferimento*</td>'+allP.map(function(){return'<td style="'+tdStyle+'"></td>';}).join('')+'</tr>'+
+        '</thead><tbody>'+
+        rows.map(function(e,idx){var an=e[1];var bg=idx%2===0?'':'background:#f0f4fb;';return'<tr>'+
+          '<td style="'+tdStyle+bg+'font-weight:bold">'+(an.punto||'')+'</td>'+
+          '<td style="'+tdStyle+bg+'">'+(an.codiceCampione||an.punto||'')+'</td>'+
+          '<td style="'+tdStyle+bg+'">'+(an.dataPrelievo||'')+'</td>'+
+          allP.map(function(p){var v=(an.parametri||{})[p]||'';return'<td style="'+tdStyle+bg+'">'+v+'</td>';}).join('')+
+          '</tr>';}).join('')+
+        '</tbody></table>'+
+        '<p style="font-size:7pt;color:#888;margin-top:6pt">* Limiti D.Lgs. 152/2006 Tabella 2 Allegato 5 alla Parte IV. &lt; = inferiore al limite di rilevabilità.</p>'+
+        '</body></html>';
+      var el=document.createElement('a');el.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));el.download='analisi_chimiche_STA.html';el.click();toast('✓ HTML scaricato');
+    }
   }
   document.getElementById('exp-modal-bg').style.display='none';
 });
