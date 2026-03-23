@@ -657,6 +657,10 @@ window.saveModal=()=>{
 };
 window.delItem=(type,key)=>{if(!confirm('Eliminare?'))return;remove(ref(db,{sito:'siti',superamento:'superamenti'}[type]+'/'+key));addLog('Eliminazione',type);toast('Eliminato');};
 window.showTab=(tab,btn)=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');};
+window.renderSiti=renderSiti;
+window.renderAnalisi=renderAnalisi;
+window.renderSoggiacenza=renderSoggiacenza;
+window.renderSuperamenti=renderSuperamenti;
 </script>
 </body>
 </html>
