@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#f4f5f7;color:#1a1a1a;font-size:14px}
-#app{display:flex;flex-direction:column;height:100vh}
+#app{display:none;flex-direction:column;height:100vh}
 header{background:#1a6fe0;color:#fff;padding:.7rem 1.2rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
 header h1{font-size:15px;font-weight:600;flex:1;min-width:160px}
 #sync-badge{font-size:12px;padding:.25rem .6rem;border-radius:20px;background:rgba(255,255,255,.2)}
@@ -68,23 +68,23 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
 .pz-editable{background:transparent;border:none;width:80px;text-align:center;font-size:12px;padding:2px 4px;border-radius:4px}
 .pz-editable:focus{outline:2px solid #1a6fe0;background:#eff6ff}
 .pz-calc{color:#0891b2;font-weight:500}
-.pz-prodotto{color:#e03030;font-weight:600}
 .section-title{font-size:14px;font-weight:600;margin-bottom:.8rem}
 .tw{overflow-x:auto}
 </style>
 </head>
 <body>
-<!-- LOGIN SCREEN -->
+
+<!-- LOGIN -->
 <div id="login-screen" style="position:fixed;inset:0;background:#f4f5f7;display:flex;align-items:center;justify-content:center;z-index:999">
-  <div style="background:#fff;border-radius:14px;padding:2rem 2.2rem;width:min(380px,94vw);border:0.5px solid #e0e0e0;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+  <div style="background:#fff;border-radius:14px;padding:2rem 2.2rem;width:min(380px,94vw);border:0.5px solid #e0e0e0">
     <div style="text-align:center;margin-bottom:1.5rem">
-      <div style="font-size:28px;margin-bottom:.4rem">🌿</div>
-      <div style="font-size:16px;font-weight:600;color:#1a1a1a">Database Ambientale</div>
+      <div style="font-size:28px">🌿</div>
+      <div style="font-size:16px;font-weight:600;margin-top:.4rem">Database Ambientale</div>
       <div style="font-size:12px;color:#888;margin-top:.2rem">STA Consulting S.r.l.</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:.7rem">
-      <input type="email" id="login-email" placeholder="Email aziendale" style="border:1px solid #d0d0d0;border-radius:8px;padding:.55rem .8rem;font-size:13px;outline:none;font-family:inherit">
-      <input type="password" id="login-pass" placeholder="Password" style="border:1px solid #d0d0d0;border-radius:8px;padding:.55rem .8rem;font-size:13px;outline:none;font-family:inherit">
+      <input type="email" id="login-email" placeholder="Email aziendale" style="border:1px solid #d0d0d0;border-radius:8px;padding:.55rem .8rem;font-size:13px;outline:none">
+      <input type="password" id="login-pass" placeholder="Password" style="border:1px solid #d0d0d0;border-radius:8px;padding:.55rem .8rem;font-size:13px;outline:none">
       <div id="login-err" style="font-size:12px;color:#e03030;min-height:16px"></div>
       <button class="primary" onclick="doLogin()" style="padding:.6rem;font-size:14px;border-radius:8px">Accedi</button>
     </div>
@@ -92,11 +92,12 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <header>
     <h1>🌿 Database Ambientale – STA Consulting</h1>
     <span id="sync-badge">⏳ connessione...</span>
-    <span id="user-label" style="font-size:12px;opacity:.8"></span>
+    <span id="user-label" style="font-size:12px;opacity:.85"></span>
     <button onclick="doLogout()" style="font-size:12px;padding:.25rem .7rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px">Esci</button>
   </header>
   <nav>
@@ -108,8 +109,6 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
     <button onclick="showTab('log',this)">Log</button>
   </nav>
   <main>
-
-    <!-- DASHBOARD -->
     <div id="tab-dashboard" class="section active">
       <div class="stat-row">
         <div class="stat"><div class="val" id="st-siti">0</div><div class="lbl">Siti attivi</div></div>
@@ -122,7 +121,6 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
       <tbody id="dash-sup-tbody"><tr><td colspan="7" class="empty">Nessun dato</td></tr></tbody></table>
     </div>
 
-    <!-- SITI -->
     <div id="tab-siti" class="section">
       <div class="toolbar">
         <input type="text" id="siti-search" placeholder="Cerca sito..." oninput="renderSiti()">
@@ -138,7 +136,6 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
       </table>
     </div>
 
-    <!-- ANALISI CHIMICHE -->
     <div id="tab-analisi" class="section">
       <div class="toolbar">
         <select id="analisi-filter-sito" onchange="renderAnalisi()"><option value="">Tutti i siti</option></select>
@@ -147,50 +144,40 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
           <option>Acque sotterranee</option><option>Suolo</option><option>Gas interstiziale</option>
         </select>
         <button class="warning" onclick="openImportModal()">⬆ Importa BIOCHEMIE</button>
-        <button class="success" onclick="openExportModal('analisi')" style="margin-left:auto">⬇ Esporta tabella</button>
+        <button class="success" onclick="openExportModal('analisi')" style="margin-left:auto">⬇ Esporta</button>
       </div>
       <div class="tw">
-        <table id="analisi-table-el">
-          <thead id="analisi-thead"><tr><th>Sito</th><th>Punto</th><th>Matrice</th><th>Data prelievo</th><th>Azioni</th></tr></thead>
-          <tbody id="analisi-tbody"><tr><td colspan="5" class="empty">Nessuna analisi importata</td></tr></tbody>
-        </table>
+        <table><thead id="analisi-thead"><tr><th>Sito</th><th>Punto</th><th>Matrice</th><th>Data prelievo</th><th>Azioni</th></tr></thead>
+        <tbody id="analisi-tbody"><tr><td colspan="5" class="empty">Nessuna analisi</td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- SOGGIACENZA FALDA -->
     <div id="tab-soggiacenza" class="section">
       <div class="toolbar">
         <select id="sogg-filter-sito" onchange="renderSoggiacenza()"><option value="">Tutti i siti</option></select>
         <select id="sogg-filter-data" onchange="renderSoggiacenza()"><option value="">Tutte le date</option></select>
         <button class="teal" onclick="openSoggImportModal()">⬆ Importa CSV quote</button>
         <button class="primary" onclick="openNuovaMisuraModal()">+ Nuova misura</button>
-        <button class="success" onclick="openExportModal('soggiacenza')" style="margin-left:auto">⬇ Esporta tabella</button>
+        <button class="success" onclick="openExportModal('soggiacenza')" style="margin-left:auto">⬇ Esporta</button>
       </div>
-      <div class="info-box">
-        Le celle <span style="color:#0891b2;font-weight:500">blu</span> sono calcolate automaticamente. 
-        Inserisci solo <b>Soggiacenza da b.p.</b> e, se presente, <b>Prodotto da b.p.</b>
-        <br>Formule: <i>Sogg. p.c. = Sogg. b.p. + (quota p.c. − quota b.p.) &nbsp;|&nbsp; Quota falda = quota b.p. − sogg. b.p.</i>
-      </div>
+      <div class="info-box">Celle <span style="color:#0891b2;font-weight:500">blu</span> = calcolate AUTO &nbsp;|&nbsp; <i>Sogg. p.c. = Sogg. b.p. + (q.p.c. − q.b.p.) &nbsp;|&nbsp; Quota falda = q.b.p. − Sogg. b.p.</i></div>
       <div class="tw">
-        <table id="sogg-table">
-          <thead>
-            <tr>
-              <th>Data rilievo</th><th>Piezometro</th>
-              <th>Quota top. p.c.<br>(m s.l.m.)</th>
-              <th>Quota top. b.p.<br>(m s.l.m.)</th>
-              <th>Profondità fondo foro<br>(m da b.p.)</th>
-              <th>Soggiacenza falda<br>(m da b.p.)</th>
-              <th>Soggiacenza falda<br>(m da p.c.) <span class="calc-badge">AUTO</span></th>
-              <th>Quota falda<br>(m s.l.m.) <span class="calc-badge">AUTO</span></th>
-              <th>Azioni</th>
-            </tr>
-          </thead>
-          <tbody id="sogg-tbody"><tr><td colspan="10" class="empty">Nessuna misura</td></tr></tbody>
+        <table>
+          <thead><tr>
+            <th>Data rilievo</th><th>Piezometro</th>
+            <th>Quota top. p.c.<br>(m s.l.m.)</th>
+            <th>Quota top. b.p.<br>(m s.l.m.)</th>
+            <th>Prof. fondo foro<br>(m da b.p.)</th>
+            <th>Soggiacenza falda<br>(m da b.p.)</th>
+            <th>Soggiacenza falda<br>(m da p.c.) <span class="calc-badge">AUTO</span></th>
+            <th>Quota falda<br>(m s.l.m.) <span class="calc-badge">AUTO</span></th>
+            <th>Azioni</th>
+          </tr></thead>
+          <tbody id="sogg-tbody"><tr><td colspan="9" class="empty">Nessuna misura</td></tr></tbody>
         </table>
       </div>
     </div>
 
-    <!-- SUPERAMENTI -->
     <div id="tab-superamenti" class="section">
       <div class="toolbar">
         <select id="sup-filter-sito" onchange="renderSuperamenti()"><option value="">Tutti i siti</option></select>
@@ -202,7 +189,6 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
       </table>
     </div>
 
-    <!-- LOG -->
     <div id="tab-log" class="section">
       <div class="toolbar">
         <span style="font-size:13px;color:#777">Ultime 100 operazioni</span>
@@ -216,21 +202,19 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
   </main>
 </div>
 
-<!-- MODAL GENERICO -->
+<!-- MODALI -->
 <div id="modal-bg" class="modal-bg" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal"><h3 id="modal-title"></h3><div id="modal-body"></div>
     <div class="modal-footer"><button onclick="closeModal()">Annulla</button><button class="primary" onclick="saveModal()">Salva</button></div>
   </div>
 </div>
 
-<!-- MODAL IMPORT BIOCHEMIE -->
 <div id="import-modal-bg" class="modal-bg" style="display:none" onclick="if(event.target===this)closeImportModal()">
   <div class="modal" style="width:min(800px,98vw)">
     <h3>⬆ Importa analisi BIOCHEMIE</h3>
-    <div class="info-box">Parametri in righe, campioni in colonne. Righe attese: Codice, Attività, PrelievoPunto, DataPrelievo, ecc.</div>
+    <div class="info-box">Parametri in righe, campioni in colonne. Prima colonna: chiavi meta (PrelievoPunto, DataPrelievo, ecc.).</div>
     <div class="drop-zone" id="drop-zone-bio" onclick="document.getElementById('file-input-bio').click()">
-      <div style="font-size:24px">📂</div>
-      <b style="font-size:13px">Trascina il file CSV BIOCHEMIE</b>
+      <div style="font-size:24px">📂</div><b style="font-size:13px">Trascina il file CSV BIOCHEMIE</b>
       <p>oppure clicca per selezionarlo</p>
       <input type="file" id="file-input-bio" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileBio(this.files[0])">
     </div>
@@ -240,21 +224,16 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
       </label>
     </div>
     <div id="bio-preview"></div>
-    <div class="modal-footer">
-      <button onclick="closeImportModal()">Annulla</button>
-      <button class="primary" id="bio-confirm-btn" style="display:none" onclick="confirmImportBio()">✓ Importa</button>
-    </div>
+    <div class="modal-footer"><button onclick="closeImportModal()">Annulla</button><button class="primary" id="bio-confirm-btn" style="display:none" onclick="confirmImportBio()">✓ Importa</button></div>
   </div>
 </div>
 
-<!-- MODAL IMPORT CSV QUOTE -->
 <div id="sogg-import-modal-bg" class="modal-bg" style="display:none" onclick="if(event.target===this)closeSoggImportModal()">
   <div class="modal" style="width:min(700px,98vw)">
     <h3>⬆ Importa CSV quote piezometriche</h3>
-    <div class="info-box">Formato atteso: colonne <b>Data, Piezometro, Quota topografica p.c. (m slm), Quota topografica b.p. (m slm), Fondo Foro (m da b.p.), Falda (m da b.p.)</b> ecc. Puoi anche caricare solo le quote per popolare l'anagrafica piezometri.</div>
+    <div class="info-box">Colonne attese: <b>Data, Piezometro, Quota topografica p.c., Quota topografica b.p., Profondità fondo foro, soggiacenza falda (m da b.p.)</b></div>
     <div class="drop-zone" id="drop-zone-sogg" onclick="document.getElementById('file-input-sogg').click()">
-      <div style="font-size:24px">📂</div>
-      <b style="font-size:13px">Trascina il file CSV quote</b>
+      <div style="font-size:24px">📂</div><b style="font-size:13px">Trascina il file CSV quote</b>
       <p>oppure clicca per selezionarlo</p>
       <input type="file" id="file-input-sogg" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileSogg(this.files[0])">
     </div>
@@ -264,44 +243,30 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
       </label>
     </div>
     <div id="sogg-import-preview"></div>
-    <div class="modal-footer">
-      <button onclick="closeSoggImportModal()">Annulla</button>
-      <button class="primary" id="sogg-confirm-btn" style="display:none" onclick="confirmImportSogg()">✓ Importa misure</button>
-    </div>
+    <div class="modal-footer"><button onclick="closeSoggImportModal()">Annulla</button><button class="primary" id="sogg-confirm-btn" style="display:none" onclick="confirmImportSogg()">✓ Importa misure</button></div>
   </div>
 </div>
 
-<!-- MODAL NUOVA MISURA MANUALE -->
 <div id="misura-modal-bg" class="modal-bg" style="display:none" onclick="if(event.target===this)closeMisuraModal()">
   <div class="modal" style="width:min(560px,97vw)">
     <h3 id="misura-modal-title">+ Nuova misura soggiacenza</h3>
     <div class="form-grid">
-      <label class="full">Sito *
-        <select id="mis-sito" onchange="updatePozziSel()">
-          <option value="">– Seleziona –</option>
-        </select>
-      </label>
+      <label class="full">Sito * <select id="mis-sito"><option value="">– Seleziona –</option></select></label>
       <label>Data rilievo * <input type="date" id="mis-data"></label>
       <label>Piezometro * <input type="text" id="mis-pz" placeholder="es. PZ01"></label>
-      <label>Quota b.p. (m s.l.m.) * <input type="number" step="0.001" id="mis-qbp"></label>
-      <label>Quota p.c. (m s.l.m.) * <input type="number" step="0.001" id="mis-qpc"></label>
+      <label>Quota b.p. (m s.l.m.) * <input type="number" step="0.001" id="mis-qbp" oninput="ricalcola()"></label>
+      <label>Quota p.c. (m s.l.m.) * <input type="number" step="0.001" id="mis-qpc" oninput="ricalcola()"></label>
       <label>Soggiacenza da b.p. (m) * <input type="number" step="0.001" id="mis-sbp" oninput="ricalcola()"></label>
-      <label>Prodotto da b.p. (mm) <input type="number" step="0.1" id="mis-prodotto" placeholder="lascia vuoto se assente"></label>
       <label>Fondo foro (m da b.p.) <input type="number" step="0.01" id="mis-fondo"></label>
     </div>
-    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.8rem;margin-top:.8rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem">
-      <div><div style="font-size:10px;color:#166534;font-weight:500;text-transform:uppercase">Sogg. da p.c.</div><div id="calc-spc" style="font-size:16px;font-weight:600;color:#0891b2">–</div></div>
-      <div><div style="font-size:10px;color:#166534;font-weight:500;text-transform:uppercase">Quota falda</div><div id="calc-qf" style="font-size:16px;font-weight:600;color:#0891b2">–</div></div>
-      <div><div style="font-size:10px;color:#166534;font-weight:500;text-transform:uppercase">Prodotto da p.c.</div><div id="calc-ppc" style="font-size:16px;font-weight:600;color:#0891b2">–</div></div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.8rem;margin-top:.8rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+      <div><div style="font-size:10px;color:#166534;font-weight:500;text-transform:uppercase">Sogg. da p.c. (m)</div><div id="calc-spc" style="font-size:18px;font-weight:600;color:#0891b2">–</div></div>
+      <div><div style="font-size:10px;color:#166534;font-weight:500;text-transform:uppercase">Quota falda (m s.l.m.)</div><div id="calc-qf" style="font-size:18px;font-weight:600;color:#0891b2">–</div></div>
     </div>
-    <div class="modal-footer">
-      <button onclick="closeMisuraModal()">Annulla</button>
-      <button class="primary" onclick="saveMisura()">Salva</button>
-    </div>
+    <div class="modal-footer"><button onclick="closeMisuraModal()">Annulla</button><button class="primary" onclick="saveMisura()">Salva</button></div>
   </div>
 </div>
 
-<!-- MODAL EXPORT -->
 <div id="export-modal-bg" class="modal-bg" style="display:none" onclick="if(event.target===this)closeExportModal()">
   <div class="modal" style="width:min(500px,97vw)">
     <h3 id="exp-title">⬇ Esporta tabella</h3>
@@ -309,18 +274,9 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
       <label class="full">Sito <select id="exp-sito"><option value="">Tutti</option></select></label>
       <label>Data da <input type="date" id="exp-da"></label>
       <label>Data a <input type="date" id="exp-a"></label>
-      <label class="full">Formato
-        <select id="exp-formato">
-          <option value="csv">CSV (Excel)</option>
-          <option value="html">Tabella HTML (Word)</option>
-        </select>
-      </label>
+      <label class="full">Formato <select id="exp-formato"><option value="csv">CSV (Excel)</option><option value="html">Tabella HTML (Word)</option></select></label>
     </div>
-    <div id="exp-preview" style="margin-top:.8rem;font-size:12px;color:#64748b"></div>
-    <div class="modal-footer">
-      <button onclick="closeExportModal()">Annulla</button>
-      <button class="success" onclick="doExport()">⬇ Scarica</button>
-    </div>
+    <div class="modal-footer"><button onclick="closeExportModal()">Annulla</button><button class="success" onclick="doExport()">⬇ Scarica</button></div>
   </div>
 </div>
 
@@ -328,54 +284,66 @@ button.teal{background:#0891b2;color:#fff;border-color:#0891b2}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, push, onValue, remove, update, onDisconnect }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getDatabase,ref,set,push,onValue,remove,update,onDisconnect}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAN5K1SdognLIrQG44byQKH1YSWlY3B6as",
-  authDomain: "database-ambientale-a5fda.firebaseapp.com",
-  databaseURL: "https://database-ambientale-a5fda-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "database-ambientale-a5fda",
-  storageBucket: "database-ambientale-a5fda.firebasestorage.app",
-  messagingSenderId: "770772833904",
-  appId: "1:770772833904:web:d6fbfa9942d1958454c6b5"
+const cfg={
+  apiKey:"AIzaSyAN5K1SdognLIrQG44byQKH1YSWlY3B6as",
+  authDomain:"database-ambientale-a5fda.firebaseapp.com",
+  databaseURL:"https://database-ambientale-a5fda-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"database-ambientale-a5fda",
+  storageBucket:"database-ambientale-a5fda.firebasestorage.app",
+  messagingSenderId:"770772833904",
+  appId:"1:770772833904:web:d6fbfa9942d1958454c6b5"
 };
+const fbApp=initializeApp(cfg);
+const db=getDatabase(fbApp);
+const auth=getAuth(fbApp);
 
-const fbApp = initializeApp(firebaseConfig);
-const db = getDatabase(fbApp);
-const auth = getAuth(fbApp);
+let siti={},analisi={},soggiacenza={},superamenti={},logItems={};
+let parsedBio=null,parsedSogg=null,currentExportTypeLoc='analisi',editingMisuraKey=null;
+let listenersStarted=false;
+const uid=()=>'U_'+Math.random().toString(36).slice(2,6).toUpperCase();
+const utente=uid();
 
-let siti={}, analisi={}, soggiacenza={}, superamenti={}, logItems={};
-let parsedBio=null, parsedSogg=null;
-let currentExportType=null, editingMisuraKey=null;
-const utente='Utente_'+Math.random().toString(36).slice(2,6).toUpperCase();
-
-// ── utils ──
 const toast=(msg,ms=2500)=>{const t=document.getElementById('toast');t.textContent=msg;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,ms);};
-const fmtDate=d=>{if(!d)return'–';if(typeof d==='string'&&d.includes('/'))return d;try{return new Date(d).toLocaleDateString('it-IT');}catch{return d;}};
+const fmtDate=d=>{if(!d)return'–';const s=String(d);if(s.includes('/'))return s;try{return new Date(s).toLocaleDateString('it-IT');}catch{return s;}};
 const fmtDT=d=>d?new Date(d).toLocaleString('it-IT'):'–';
-const n2=v=>v!==null&&v!==undefined&&v!==''?Number(v).toFixed(3):'–';
+const n2=v=>v!==null&&v!==undefined&&v!==''?Number(v).toFixed(2):'–';
 const parseN=v=>{if(v===null||v===undefined||v==='')return null;const s=String(v).trim().replace(',','.');if(s.startsWith('<'))return null;const n=parseFloat(s);return isNaN(n)?null:n;};
-const dispVal=v=>{if(v===null||v===undefined||v==='')return '<span style="color:#94a3b8">n.d.</span>';const s=String(v);if(s.startsWith('<'))return`<span style="color:#64748b">${s}</span>`;return s;};
+const dispVal=v=>{if(v===null||v===undefined||v==='')return'<span style="color:#94a3b8">n.d.</span>';const s=String(v);return s.startsWith('<')?`<span style="color:#64748b">${s}</span>`:s;};
 
-// ── formule soggiacenza ──
-function calcSogg(qbp, qpc, sbp){
-  const spc = (sbp!==null && qbp!==null && qpc!==null) ? sbp + (qpc - qbp) : null;
-  const qf  = (sbp!==null && qbp!==null) ? qbp - sbp : null;
-  return {spc, qf};
-}
-function calcProdottoPC(qbp, qpc, prodBP){
-  if(prodBP===null||prodBP===undefined||prodBP==='')return null;
-  const p=parseN(prodBP);
-  if(p===null||qbp===null||qpc===null)return null;
-  // prodotto da p.c. = prodotto da b.p. + (qpc-qbp)*1000 [mm]
-  return p + (qpc - qbp)*1000;
+function calcSogg(qbp,qpc,sbp){
+  const spc=(sbp!==null&&qbp!==null&&qpc!==null)?sbp+(qpc-qbp):null;
+  const qf=(sbp!==null&&qbp!==null)?qbp-sbp:null;
+  return{spc,qf};
 }
 
-// ── Firebase ──
+// ── AUTH ──
+onAuthStateChanged(auth,user=>{
+  if(user){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('user-label').textContent=user.email;
+    if(!listenersStarted){listenersStarted=true;startListeners();setPresence();}
+  } else {
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('app').style.display='none';
+  }
+});
+
+window.doLogin=async()=>{
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  document.getElementById('login-err').textContent='';
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch{document.getElementById('login-err').textContent='Email o password errati.';}
+};
+window.doLogout=async()=>{await signOut(auth);listenersStarted=false;};
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ── FIREBASE ──
 function startListeners(){
   const b=document.getElementById('sync-badge');
   const L=(path,store,cb)=>onValue(ref(db,path),snap=>{window[store]=snap.val()||{};cb();},()=>{b.textContent='❌ Offline';b.className='err';});
@@ -402,7 +370,6 @@ function renderDashSup(){
   tb.innerHTML=rows.map(([,s])=>`<tr><td>${s.sito||'–'}</td><td>${s.punto||'–'}</td><td>${s.parametro}</td><td><b>${s.valore}</b></td><td>${s.csc}</td><td>${s.matrice}</td><td>${fmtDate(s.data)}</td></tr>`).join('');
 }
 
-// ── siti ──
 function renderSiti(){
   const q=document.getElementById('siti-search').value.toLowerCase();
   const st=document.getElementById('siti-filter-stato').value;
@@ -412,7 +379,6 @@ function renderSiti(){
   tb.innerHTML=rows.map(([k,s])=>`<tr><td><code>${s.codice||''}</code></td><td>${s.nome||''}</td><td>${s.comune||'–'}</td><td><span class="badge grey">${s.tipo||'–'}</span></td><td><span class="badge ${s.stato==='Attivo'?'ok':s.stato==='Chiuso'?'grey':'warn'}">${s.stato||'–'}</span></td><td>${s.responsabile||'–'}</td><td class="act-row"><button onclick="editItem('sito','${k}')">✏</button><button class="danger" onclick="delItem('sito','${k}')">✕</button></td></tr>`).join('');
 }
 
-// ── analisi ──
 function renderAnalisi(){
   const fs=document.getElementById('analisi-filter-sito').value;
   const fm=document.getElementById('analisi-filter-matrice').value;
@@ -422,41 +388,24 @@ function renderAnalisi(){
   document.getElementById('analisi-thead').innerHTML=`<tr><th>Sito</th><th>Punto</th><th>Matrice</th><th>Data prelievo</th>${allP.map(p=>`<th style="white-space:nowrap;font-size:10px">${p}</th>`).join('')}<th>Azioni</th></tr>`;
   document.getElementById('analisi-tbody').innerHTML=rows.map(([k,a])=>`<tr><td>${a.sito||'–'}</td><td><b>${a.punto||'–'}</b></td><td><span class="badge blue">${a.matrice||'–'}</span></td><td>${fmtDate(a.dataPrelievo)}</td>${allP.map(p=>`<td>${dispVal((a.parametri||{})[p])}</td>`).join('')}<td class="act-row"><button class="danger" onclick="delAnalisi('${k}')">✕</button></td></tr>`).join('');
 }
-window.delAnalisi=key=>{if(!confirm('Eliminare?'))return;remove(ref(db,'analisi/'+key));addLog('Eliminazione','Analisi: '+key);toast('Eliminata');};
+window.delAnalisi=k=>{if(!confirm('Eliminare?'))return;remove(ref(db,'analisi/'+k));addLog('Eliminazione','Analisi');toast('Eliminata');};
 
-// ── SOGGIACENZA ──
 function renderSoggiacenza(){
   const fs=document.getElementById('sogg-filter-sito').value;
   const fd=document.getElementById('sogg-filter-data').value;
-  // update date filter options
   const dates=[...new Set(Object.values(soggiacenza).map(s=>s.dataRilievo).filter(Boolean))].sort();
   const dSel=document.getElementById('sogg-filter-data');
   const curD=dSel.value;
   dSel.innerHTML='<option value="">Tutte le date</option>'+dates.map(d=>`<option value="${d}" ${d===curD?'selected':''}>${fmtDate(d)}</option>`).join('');
-
-  const rows=Object.entries(soggiacenza).filter(([,s])=>{
-    if(fs&&s.sitoKey!==fs)return false;
-    if(fd&&s.dataRilievo!==fd)return false;
-    return true;
-  }).sort((a,b)=>{
-    const dc=String(a[1].dataRilievo).localeCompare(String(b[1].dataRilievo));
-    return dc||String(a[1].piezometro).localeCompare(String(b[1].piezometro));
-  });
-
+  const rows=Object.entries(soggiacenza).filter(([,s])=>{if(fs&&s.sitoKey!==fs)return false;if(fd&&s.dataRilievo!==fd)return false;return true;}).sort((a,b)=>{const dc=String(a[1].dataRilievo).localeCompare(String(b[1].dataRilievo));return dc||String(a[1].piezometro).localeCompare(String(b[1].piezometro));});
   const tb=document.getElementById('sogg-tbody');
-  if(!rows.length){tb.innerHTML='<tr><td colspan="10" class="empty">Nessuna misura</td></tr>';return;}
-
+  if(!rows.length){tb.innerHTML='<tr><td colspan="9" class="empty">Nessuna misura</td></tr>';return;}
   tb.innerHTML=rows.map(([k,s])=>{
-    const qbp=parseN(s.quotaBP), qpc=parseN(s.quotaPC), sbp=parseN(s.soggBP);
-    const {spc,qf}=calcSogg(qbp,qpc,sbp);
-    const prodBP=parseN(s.prodottoBP);
-    const prodPC=calcProdottoPC(qbp,qpc,prodBP);
-    const hasProd=prodBP!==null;
-    return `<tr>
-      <td>${fmtDate(s.dataRilievo)}</td>
-      <td><b>${s.piezometro||'–'}</b></td>
-      <td>${n2(qpc)}</td>
-      <td>${n2(qbp)}</td>
+    const qbp=parseN(s.quotaBP),qpc=parseN(s.quotaPC),sbp=parseN(s.soggBP);
+    const{spc,qf}=calcSogg(qbp,qpc,sbp);
+    return`<tr>
+      <td>${fmtDate(s.dataRilievo)}</td><td><b>${s.piezometro||'–'}</b></td>
+      <td>${n2(qpc)}</td><td>${n2(qbp)}</td>
       <td><input class="pz-editable" value="${s.fondoForo||''}" onchange="updateSoggField('${k}','fondoForo',this.value)" placeholder="–"></td>
       <td><input class="pz-editable" value="${s.soggBP||''}" onchange="updateSoggField('${k}','soggBP',this.value)" placeholder="–"></td>
       <td class="pz-calc">${spc!==null?spc.toFixed(2):'–'}</td>
@@ -465,253 +414,111 @@ function renderSoggiacenza(){
     </tr>`;
   }).join('');
 }
+window.updateSoggField=(k,f,v)=>update(ref(db,'soggiacenza/'+k),{[f]:v});
+window.delMisura=k=>{if(!confirm('Eliminare?'))return;remove(ref(db,'soggiacenza/'+k));addLog('Eliminazione','Soggiacenza');toast('Eliminata');};
 
-window.updateSoggField=(key,field,val)=>{
-  update(ref(db,'soggiacenza/'+key),{[field]:val});
-};
-window.delMisura=key=>{if(!confirm('Eliminare?'))return;remove(ref(db,'soggiacenza/'+key));addLog('Eliminazione','Misura soggiacenza: '+key);toast('Eliminata');};
-
-// ── nuova misura manuale ──
 window.openNuovaMisuraModal=()=>{
   editingMisuraKey=null;
+  ['mis-data','mis-pz','mis-qbp','mis-qpc','mis-sbp','mis-fondo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('misura-modal-title').textContent='+ Nuova misura soggiacenza';
-  document.getElementById('mis-data').value='';
-  document.getElementById('mis-pz').value='';
-  document.getElementById('mis-qbp').value='';
-  document.getElementById('mis-qpc').value='';
-  document.getElementById('mis-sbp').value='';
-  document.getElementById('mis-prodotto').value='';
-  document.getElementById('mis-fondo').value='';
+  const s=document.getElementById('mis-sito');
+  s.innerHTML='<option value="">– Seleziona –</option>'+Object.entries(siti).map(([k,v])=>`<option value="${k}">${v.nome}</option>`).join('');
   ricalcola();
-  updatePozziSel();
   document.getElementById('misura-modal-bg').style.display='flex';
 };
-window.editMisura=key=>{
-  editingMisuraKey=key;
-  const s=soggiacenza[key];
-  if(!s)return;
-  document.getElementById('misura-modal-title').textContent='✏ Modifica misura soggiacenza';
-  document.getElementById('mis-sito').value=s.sitoKey||'';
+window.editMisura=k=>{
+  editingMisuraKey=k;const s=soggiacenza[k];if(!s)return;
+  document.getElementById('misura-modal-title').textContent='✏ Modifica misura';
+  const sel=document.getElementById('mis-sito');
+  sel.innerHTML='<option value="">– Seleziona –</option>'+Object.entries(siti).map(([sk,v])=>`<option value="${sk}" ${s.sitoKey===sk?'selected':''}>${v.nome}</option>`).join('');
   document.getElementById('mis-data').value=s.dataRilievo||'';
   document.getElementById('mis-pz').value=s.piezometro||'';
   document.getElementById('mis-qbp').value=s.quotaBP||'';
   document.getElementById('mis-qpc').value=s.quotaPC||'';
   document.getElementById('mis-sbp').value=s.soggBP||'';
-  document.getElementById('mis-prodotto').value=s.prodottoBP||'';
   document.getElementById('mis-fondo').value=s.fondoForo||'';
   ricalcola();
   document.getElementById('misura-modal-bg').style.display='flex';
 };
 window.closeMisuraModal=()=>{document.getElementById('misura-modal-bg').style.display='none';};
-
 window.ricalcola=()=>{
   const qbp=parseN(document.getElementById('mis-qbp').value);
   const qpc=parseN(document.getElementById('mis-qpc').value);
   const sbp=parseN(document.getElementById('mis-sbp').value);
-  const prodBP=parseN(document.getElementById('mis-prodotto').value);
-  const {spc,qf}=calcSogg(qbp,qpc,sbp);
-  const prodPC=calcProdottoPC(qbp,qpc,prodBP);
-  document.getElementById('calc-spc').textContent=spc!==null?spc.toFixed(3)+' m':'–';
-  document.getElementById('calc-qf').textContent=qf!==null?qf.toFixed(3)+' m s.l.m.':'–';
-  document.getElementById('calc-ppc').textContent=prodPC!==null?prodPC.toFixed(1)+' mm':'–';
+  const{spc,qf}=calcSogg(qbp,qpc,sbp);
+  document.getElementById('calc-spc').textContent=spc!==null?spc.toFixed(2):'–';
+  document.getElementById('calc-qf').textContent=qf!==null?qf.toFixed(2):'–';
 };
-
-['mis-qbp','mis-qpc','mis-sbp','mis-prodotto'].forEach(id=>document.getElementById(id)?.addEventListener('input',ricalcola));
-
 window.saveMisura=()=>{
   const sitoKey=document.getElementById('mis-sito').value;
-  const data={
-    sitoKey, sito:sitoKey&&siti[sitoKey]?siti[sitoKey].nome:'',
+  const data={sitoKey,sito:sitoKey&&siti[sitoKey]?siti[sitoKey].nome:'',
     dataRilievo:document.getElementById('mis-data').value,
     piezometro:document.getElementById('mis-pz').value,
     quotaBP:document.getElementById('mis-qbp').value,
     quotaPC:document.getElementById('mis-qpc').value,
     soggBP:document.getElementById('mis-sbp').value,
-    prodottoBP:document.getElementById('mis-prodotto').value||'',
-    fondoForo:document.getElementById('mis-fondo').value||''
-  };
+    fondoForo:document.getElementById('mis-fondo').value||''};
   if(!data.dataRilievo||!data.piezometro||!data.quotaBP||!data.quotaPC||!data.soggBP){toast('Compila i campi obbligatori (*)');return;}
-  if(editingMisuraKey){update(ref(db,'soggiacenza/'+editingMisuraKey),data);addLog('Modifica','Soggiacenza: '+data.piezometro);}
-  else{push(ref(db,'soggiacenza'),data);addLog('Inserimento','Soggiacenza: '+data.piezometro+' – '+data.dataRilievo);}
+  if(editingMisuraKey)update(ref(db,'soggiacenza/'+editingMisuraKey),data);
+  else push(ref(db,'soggiacenza'),data);
+  addLog(editingMisuraKey?'Modifica':'Inserimento','Soggiacenza: '+data.piezometro);
   closeMisuraModal();toast('✓ Salvato');
-};
-window.updatePozziSel=()=>{
-  const s=document.getElementById('mis-sito');
-  s.innerHTML='<option value="">– Seleziona sito –</option>'+Object.entries(siti).map(([k,v])=>`<option value="${k}">${v.nome}</option>`).join('');
-};
-
-// ── IMPORT CSV QUOTE ──
-window.openSoggImportModal=()=>{
-  parsedSogg=null;
-  document.getElementById('sogg-import-preview').innerHTML='';
-  document.getElementById('sogg-confirm-btn').style.display='none';
-  document.getElementById('sogg-sito-row').style.display='none';
-  document.getElementById('file-input-sogg').value='';
-  updateFilters();
-  document.getElementById('sogg-import-modal-bg').style.display='flex';
-};
-window.closeSoggImportModal=()=>{document.getElementById('sogg-import-modal-bg').style.display='none';};
-
-const dzS=document.getElementById('drop-zone-sogg');
-dzS.addEventListener('dragover',e=>{e.preventDefault();dzS.classList.add('dragover');});
-dzS.addEventListener('dragleave',()=>dzS.classList.remove('dragover'));
-dzS.addEventListener('drop',e=>{e.preventDefault();dzS.classList.remove('dragover');if(e.dataTransfer.files[0])handleFileSogg(e.dataTransfer.files[0]);});
-
-window.handleFileSogg=file=>{
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      let rows=[];
-      if(file.name.toLowerCase().endsWith('.csv')){
-        const text=e.target.result;
-        // detect separator
-        const sep=text.indexOf('\t')>-1?'\t':';';
-        rows=text.split('\n').map(r=>r.split(sep).map(c=>c.trim().replace(/^"|"$/g,'').replace(/\n/g,' ')));
-      } else {
-        const wb=XLSX.read(e.target.result,{type:'array'});
-        rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
-      }
-      parseSoggCSV(rows);
-    }catch(err){document.getElementById('sogg-import-preview').innerHTML=`<div class="warn-box">Errore: ${err.message}</div>`;}
-  };
-  if(file.name.toLowerCase().endsWith('.csv'))reader.readAsText(file,'utf-8');
-  else reader.readAsArrayBuffer(file);
-};
-
-function parseSoggCSV(rows){
-  // find header row
-  let hIdx=0;
-  for(let i=0;i<Math.min(rows.length,5);i++){
-    const r=rows[i].join(' ').toLowerCase();
-    if(r.includes('piezometro')||r.includes('quota')){hIdx=i;break;}
-  }
-  const headers=rows[hIdx].map(h=>String(h).replace(/\n/g,' ').replace(/\s+/g,' ').trim().toLowerCase());
-
-  const col=name=>{
-    const idx=headers.findIndex(h=>h.includes(name.toLowerCase()));
-    return idx;
-  };
-  const iData=col('data'); const iPz=col('piezometro'); const iQPC=col('p.c'); const iQBP=col('b.p');
-  const iFondo=col('fondo'); const iFaldaBP=col('falda'); const iProdBP=col('prodotto');
-
-  if(iPz===-1||iQBP===-1){
-    document.getElementById('sogg-import-preview').innerHTML='<div class="warn-box">Colonne "Piezometro" o "Quota b.p." non trovate. Verifica il file.</div>';return;
-  }
-
-  parsedSogg=[];
-  let lastData='';
-  for(let i=hIdx+1;i<rows.length;i++){
-    const r=rows[i];
-    if(!r||r.every(c=>!c))continue;
-    const pz=String(r[iPz]||'').trim();
-    if(!pz)continue;
-    const dataVal=String(r[iData]||'').trim()||lastData;
-    if(dataVal)lastData=dataVal;
-    const qbp=String(r[iQBP]||'').replace(',','.');
-    const qpc=iQPC>-1?String(r[iQPC]||'').replace(',','.'):qbp;
-    const sbp=iFaldaBP>-1?String(r[iFaldaBP]||'').replace(',','.'):'';
-    const fondo=iFondo>-1?String(r[iFondo]||'').replace(',','.'):'';
-    const prodBP=iProdBP>-1?String(r[iProdBP]||'').replace(',','.'):'';
-    parsedSogg.push({dataRilievo:dataVal,piezometro:pz,quotaBP:qbp,quotaPC:qpc,soggBP:sbp,fondoForo:fondo,prodottoBP:prodBP.replace(/-/g,'')});
-  }
-
-  if(!parsedSogg.length){document.getElementById('sogg-import-preview').innerHTML='<div class="warn-box">Nessun dato trovato.</div>';return;}
-
-  const prev=parsedSogg.slice(0,6);
-  document.getElementById('sogg-import-preview').innerHTML=`
-    <div class="info-box">Trovati <b>${parsedSogg.length} record</b>. Anteprima:</div>
-    <div class="import-preview"><table><thead><tr><th>Data</th><th>Piezometro</th><th>Quota b.p.</th><th>Quota p.c.</th><th>Sogg. b.p.</th><th>Prodotto</th></tr></thead>
-    <tbody>${prev.map(r=>`<tr><td>${r.dataRilievo}</td><td><b>${r.piezometro}</b></td><td>${r.quotaBP}</td><td>${r.quotaPC}</td><td>${r.soggBP||'–'}</td><td>${r.prodottoBP||'–'}</td></tr>`).join('')}</tbody></table></div>`;
-  document.getElementById('sogg-sito-row').style.display='block';
-  const sel=document.getElementById('sogg-sito-sel');
-  sel.innerHTML='<option value="">– Seleziona sito –</option>'+Object.entries(siti).map(([k,v])=>`<option value="${k}">${v.nome}</option>`).join('');
-  document.getElementById('sogg-confirm-btn').style.display='inline-flex';
-}
-
-window.confirmImportSogg=()=>{
-  if(!parsedSogg)return;
-  const sitoKey=document.getElementById('sogg-sito-sel').value;
-  const sitoNome=sitoKey&&siti[sitoKey]?siti[sitoKey].nome:'';
-  parsedSogg.forEach(r=>push(ref(db,'soggiacenza'),{...r,sitoKey,sito:sitoNome,importedAt:Date.now(),importedBy:utente}));
-  addLog('Import CSV soggiacenza',`${parsedSogg.length} record${sitoNome?' – '+sitoNome:''}`);
-  closeSoggImportModal();toast(`✓ ${parsedSogg.length} misure importate`);
 };
 
 // ── IMPORT BIOCHEMIE ──
-window.openImportModal=()=>{
-  parsedBio=null;
-  document.getElementById('bio-preview').innerHTML='';
-  document.getElementById('bio-confirm-btn').style.display='none';
-  document.getElementById('bio-sito-row').style.display='none';
-  document.getElementById('file-input-bio').value='';
-  updateFilters();
-  document.getElementById('import-modal-bg').style.display='flex';
-};
+window.openImportModal=()=>{parsedBio=null;document.getElementById('bio-preview').innerHTML='';document.getElementById('bio-confirm-btn').style.display='none';document.getElementById('bio-sito-row').style.display='none';document.getElementById('file-input-bio').value='';updateFilters();document.getElementById('import-modal-bg').style.display='flex';};
 window.closeImportModal=()=>{document.getElementById('import-modal-bg').style.display='none';};
 const dzB=document.getElementById('drop-zone-bio');
 dzB.addEventListener('dragover',e=>{e.preventDefault();dzB.classList.add('dragover');});
 dzB.addEventListener('dragleave',()=>dzB.classList.remove('dragover'));
 dzB.addEventListener('drop',e=>{e.preventDefault();dzB.classList.remove('dragover');if(e.dataTransfer.files[0])handleFileBio(e.dataTransfer.files[0]);});
-
 window.handleFileBio=file=>{
-  const reader=new FileReader();
-  reader.onload=e=>{
+  const r=new FileReader();
+  r.onload=e=>{
     try{
       let rows=[];
       if(file.name.toLowerCase().endsWith('.csv')){
-        const text=e.target.result;
-        const sep=text.indexOf('\t')>-1?'\t':';';
+        const text=e.target.result;const sep=text.indexOf('\t')>-1?'\t':';';
         rows=text.split('\n').map(r=>r.split(sep).map(c=>c.trim().replace(/^"|"$/g,'')));
-      } else {
-        const wb=XLSX.read(e.target.result,{type:'array'});
-        rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
-      }
+      } else {const wb=XLSX.read(e.target.result,{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});}
       parseBIOCHIMIE(rows);
     }catch(err){document.getElementById('bio-preview').innerHTML=`<div class="warn-box">Errore: ${err.message}</div>`;}
   };
-  if(file.name.toLowerCase().endsWith('.csv'))reader.readAsText(file,'utf-8');
-  else reader.readAsArrayBuffer(file);
+  if(file.name.toLowerCase().endsWith('.csv'))r.readAsText(file,'utf-8');else r.readAsArrayBuffer(file);
 };
-
 function parseBIOCHIMIE(rows){
   const meta={};
   const MK=['Attività','Attività - Matrice','DataPrelievo','PrelievoPunto','PrelievoLuogo','DataFineAnalisi','Codice Campione','Codice'];
   let dataStart=rows.length;
   for(let i=0;i<rows.length;i++){
-    const key=String(rows[i][0]||'').trim();
-    if(MK.includes(key))meta[key]=rows[i].slice(1);
+    const key=String(rows[i][0]||'').replace(/[\n\r]/g,' ').replace(/\s+/g,' ').trim();
+    const mk=MK.find(k=>key===k||key.startsWith(k));
+    if(mk){meta[mk]=rows[i].slice(1).map(v=>String(v||'').replace(/[\n\r]/g,' ').trim());}
     else if(key&&i>3){dataStart=i;break;}
   }
-  const pts=(meta['PrelievoPunto']||[]).filter(v=>v);
-  if(!pts.length){document.getElementById('bio-preview').innerHTML='<div class="warn-box">Riga PrelievoPunto non trovata.</div>';return;}
-  const nC=pts.length;
-  const parametriPerC=Array.from({length:nC},()=>({}));
-  for(let i=dataStart;i<rows.length;i++){
-    const raw=String(rows[i][0]||'').trim();
-    if(!raw)continue;
-    const m=raw.match(/^(.+?)\s*\(([^)]+)\)\s*$/);
-    const pName=m?m[1].trim():raw;
-    const unit=m?m[2].trim():'';
-    for(let c=0;c<nC;c++) parametriPerC[c][pName+(unit?` (${unit})`:'')] = String(rows[i][c+1]||'').trim();
+  if(!meta['PrelievoPunto']){
+    for(let i=0;i<rows.length;i++){
+      const key=String(rows[i][0]||'').replace(/[\n\r]/g,' ').trim().toLowerCase();
+      if(key.includes('prelievopunto')){meta['PrelievoPunto']=rows[i].slice(1).map(v=>String(v||'').trim());break;}
+    }
   }
-  parsedBio=Array.from({length:nC},(_,c)=>({
-    punto:(meta['PrelievoPunto']||[])[c]||'',
-    matrice:(meta['Attività - Matrice']||meta['Attività']||[])[c]||'Acque sotterranee',
-    dataPrelievo:(meta['DataPrelievo']||[])[c]||'',
-    luogo:(meta['PrelievoLuogo']||[])[c]||'',
-    codiceCampione:(meta['Codice Campione']||[])[c]||'',
-    parametri:parametriPerC[c]
-  }));
+  const pts=(meta['PrelievoPunto']||[]).filter(v=>v);
+  if(!pts.length){document.getElementById('bio-preview').innerHTML='<div class="warn-box">Riga "PrelievoPunto" non trovata nel file.</div>';return;}
+  const nC=pts.length;
+  const par=Array.from({length:nC},()=>({}));
+  for(let i=dataStart;i<rows.length;i++){
+    const raw=String(rows[i][0]||'').trim();if(!raw)continue;
+    const m=raw.match(/^(.+?)\s*\(([^)]+)\)\s*$/);
+    const pName=m?m[1].trim():raw;const unit=m?m[2].trim():'';
+    for(let c=0;c<nC;c++)par[c][pName+(unit?` (${unit})`:'')]=String(rows[i][c+1]||'').trim();
+  }
+  parsedBio=Array.from({length:nC},(_,c)=>({punto:pts[c],matrice:(meta['Attività - Matrice']||meta['Attività']||[])[c]||'Acque sotterranee',dataPrelievo:(meta['DataPrelievo']||[])[c]||'',luogo:(meta['PrelievoLuogo']||[])[c]||'',codiceCampione:(meta['Codice Campione']||[])[c]||'',parametri:par[c]}));
   const allP=[...new Set(parsedBio.flatMap(c=>Object.keys(c.parametri)))].slice(0,10);
-  document.getElementById('bio-preview').innerHTML=`
-    <div class="info-box">Trovati <b>${nC} campioni</b> con <b>${Object.keys(parsedBio[0].parametri).length} parametri</b>.</div>
-    <div class="import-preview"><table><thead><tr><th>Punto</th><th>Data</th>${allP.map(p=>`<th style="font-size:10px">${p}</th>`).join('')}</tr></thead>
-    <tbody>${parsedBio.map(c=>`<tr><td><b>${c.punto}</b></td><td>${c.dataPrelievo}</td>${allP.map(p=>`<td>${dispVal(c.parametri[p])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('bio-preview').innerHTML=`<div class="info-box">Trovati <b>${nC} campioni</b> con <b>${Object.keys(parsedBio[0].parametri).length} parametri</b>.</div><div class="import-preview"><table><thead><tr><th>Punto</th><th>Data</th>${allP.map(p=>`<th style="font-size:10px">${p}</th>`).join('')}</tr></thead><tbody>${parsedBio.map(c=>`<tr><td><b>${c.punto}</b></td><td>${c.dataPrelievo}</td>${allP.map(p=>`<td>${dispVal(c.parametri[p])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   document.getElementById('bio-sito-row').style.display='block';
   const sel=document.getElementById('bio-sito-sel');
   sel.innerHTML='<option value="">– Seleziona sito –</option>'+Object.entries(siti).map(([k,v])=>`<option value="${k}">${v.nome}</option>`).join('');
   document.getElementById('bio-confirm-btn').style.display='inline-flex';
-  updateFilters();
 }
 window.confirmImportBio=()=>{
   if(!parsedBio)return;
@@ -722,124 +529,92 @@ window.confirmImportBio=()=>{
   closeImportModal();toast(`✓ ${parsedBio.length} campioni importati`);
 };
 
+// ── IMPORT CSV SOGGIACENZA ──
+window.openSoggImportModal=()=>{parsedSogg=null;document.getElementById('sogg-import-preview').innerHTML='';document.getElementById('sogg-confirm-btn').style.display='none';document.getElementById('sogg-sito-row').style.display='none';document.getElementById('file-input-sogg').value='';updateFilters();document.getElementById('sogg-import-modal-bg').style.display='flex';};
+window.closeSoggImportModal=()=>{document.getElementById('sogg-import-modal-bg').style.display='none';};
+const dzS=document.getElementById('drop-zone-sogg');
+dzS.addEventListener('dragover',e=>{e.preventDefault();dzS.classList.add('dragover');});
+dzS.addEventListener('dragleave',()=>dzS.classList.remove('dragover'));
+dzS.addEventListener('drop',e=>{e.preventDefault();dzS.classList.remove('dragover');if(e.dataTransfer.files[0])handleFileSogg(e.dataTransfer.files[0]);});
+window.handleFileSogg=file=>{
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      let rows=[];
+      if(file.name.toLowerCase().endsWith('.csv')){
+        const text=e.target.result;const sep=text.indexOf('\t')>-1?'\t':';';
+        rows=text.split('\n').map(r=>r.split(sep).map(c=>c.trim().replace(/^"|"$/g,'').replace(/\n/g,' ')));
+      } else {const wb=XLSX.read(e.target.result,{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});}
+      parseSoggCSV(rows);
+    }catch(err){document.getElementById('sogg-import-preview').innerHTML=`<div class="warn-box">Errore: ${err.message}</div>`;}
+  };
+  if(file.name.toLowerCase().endsWith('.csv'))r.readAsText(file,'utf-8');else r.readAsArrayBuffer(file);
+};
+function parseSoggCSV(rows){
+  let hIdx=0;
+  for(let i=0;i<Math.min(rows.length,5);i++){const r=rows[i].join(' ').toLowerCase();if(r.includes('piezometro')||r.includes('quota')){hIdx=i;break;}}
+  const hdrs=rows[hIdx].map(h=>String(h).replace(/\n/g,' ').replace(/\s+/g,' ').trim().toLowerCase());
+  const col=n=>hdrs.findIndex(h=>h.includes(n.toLowerCase()));
+  const iData=col('data'),iPz=col('piezometro'),iQPC=col('p.c'),iQBP=col('b.p'),iFondo=col('fondo'),iFalda=col('falda');
+  if(iPz===-1||iQBP===-1){document.getElementById('sogg-import-preview').innerHTML='<div class="warn-box">Colonne "Piezometro" o "b.p." non trovate.</div>';return;}
+  parsedSogg=[];let lastData='';
+  for(let i=hIdx+1;i<rows.length;i++){
+    const r=rows[i];if(!r||r.every(c=>!c))continue;
+    const pz=String(r[iPz]||'').trim();if(!pz)continue;
+    const dv=String(r[iData]||'').trim()||lastData;if(dv)lastData=dv;
+    parsedSogg.push({dataRilievo:dv,piezometro:pz,quotaBP:String(r[iQBP]||'').replace(',','.'),quotaPC:iQPC>-1?String(r[iQPC]||'').replace(',','.'):String(r[iQBP]||'').replace(',','.'),soggBP:iFalda>-1?String(r[iFalda]||'').replace(',','.'):'',fondoForo:iFondo>-1?String(r[iFondo]||'').replace(',','.'):'',});
+  }
+  if(!parsedSogg.length){document.getElementById('sogg-import-preview').innerHTML='<div class="warn-box">Nessun dato trovato.</div>';return;}
+  const prev=parsedSogg.slice(0,5);
+  document.getElementById('sogg-import-preview').innerHTML=`<div class="info-box">Trovati <b>${parsedSogg.length} record</b>.</div><div class="import-preview"><table><thead><tr><th>Data</th><th>Piezometro</th><th>Quota p.c.</th><th>Quota b.p.</th><th>Sogg. b.p.</th></tr></thead><tbody>${prev.map(r=>`<tr><td>${r.dataRilievo}</td><td><b>${r.piezometro}</b></td><td>${r.quotaPC}</td><td>${r.quotaBP}</td><td>${r.soggBP||'–'}</td></tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('sogg-sito-row').style.display='block';
+  const sel=document.getElementById('sogg-sito-sel');
+  sel.innerHTML='<option value="">– Seleziona sito –</option>'+Object.entries(siti).map(([k,v])=>`<option value="${k}">${v.nome}</option>`).join('');
+  document.getElementById('sogg-confirm-btn').style.display='inline-flex';
+}
+window.confirmImportSogg=()=>{
+  if(!parsedSogg)return;
+  const sitoKey=document.getElementById('sogg-sito-sel').value;
+  const sitoNome=sitoKey&&siti[sitoKey]?siti[sitoKey].nome:'';
+  parsedSogg.forEach(r=>push(ref(db,'soggiacenza'),{...r,sitoKey,sito:sitoNome,importedAt:Date.now(),importedBy:utente}));
+  addLog('Import CSV soggiacenza',`${parsedSogg.length} record${sitoNome?' – '+sitoNome:''}`);
+  closeSoggImportModal();toast(`✓ ${parsedSogg.length} misure importate`);
+};
+
 // ── EXPORT ──
-let currentExportTypeLoc='analisi';
-window.openExportModal=type=>{
-  currentExportTypeLoc=type;
-  document.getElementById('exp-title').textContent=type==='soggiacenza'?'⬇ Esporta tabella soggiacenza':'⬇ Esporta tabella analisi chimiche';
-  updateFilters();
-  document.getElementById('export-modal-bg').style.display='flex';
-  document.getElementById('exp-preview').textContent='';
-};
+window.openExportModal=type=>{currentExportTypeLoc=type;document.getElementById('exp-title').textContent=type==='soggiacenza'?'⬇ Esporta soggiacenza':'⬇ Esporta analisi chimiche';updateFilters();document.getElementById('export-modal-bg').style.display='flex';};
 window.closeExportModal=()=>{document.getElementById('export-modal-bg').style.display='none';};
-window.doExport=()=>{
-  if(currentExportTypeLoc==='soggiacenza') exportSoggiacenza();
-  else exportAnalisi();
-  closeExportModal();
-};
+window.doExport=()=>{if(currentExportTypeLoc==='soggiacenza')exportSoggiacenza();else exportAnalisi();closeExportModal();};
 
 function exportSoggiacenza(){
-  const fs=document.getElementById('exp-sito').value;
-  const da=document.getElementById('exp-da').value;
-  const a=document.getElementById('exp-a').value;
-  const fmt2=document.getElementById('exp-formato').value;
-  const rows=Object.entries(soggiacenza).filter(([,s])=>{
-    if(fs&&s.sitoKey!==fs)return false;
-    if(da&&s.dataRilievo&&s.dataRilievo<da)return false;
-    if(a&&s.dataRilievo&&s.dataRilievo>a)return false;
-    return true;
-  }).sort((a,b)=>{const dc=String(a[1].dataRilievo).localeCompare(String(b[1].dataRilievo));return dc||String(a[1].piezometro).localeCompare(String(b[1].piezometro));});
-
-  if(!rows.length){toast('Nessun dato da esportare');return;}
-
+  const fs=document.getElementById('exp-sito').value,da=document.getElementById('exp-da').value,a=document.getElementById('exp-a').value,fmt=document.getElementById('exp-formato').value;
+  const rows=Object.entries(soggiacenza).filter(([,s])=>{if(fs&&s.sitoKey!==fs)return false;if(da&&s.dataRilievo&&s.dataRilievo<da)return false;if(a&&s.dataRilievo&&s.dataRilievo>a)return false;return true;}).sort((a,b)=>{const dc=String(a[1].dataRilievo).localeCompare(String(b[1].dataRilievo));return dc||String(a[1].piezometro).localeCompare(String(b[1].piezometro));});
+  if(!rows.length){toast('Nessun dato');return;}
   const hdrs=['Data rilievo','Piezometro','Quota topografica p.c. (m slm)','Quota topografica b.p. (m slm)','Profondità fondo foro (m da b.p.)','Soggiacenza falda (m da b.p.)','Soggiacenza falda (m da p.c.)','Quota falda (m s.l.m.)'];
-
-  const makeRow=([,s])=>{
-    const qbp=parseN(s.quotaBP),qpc=parseN(s.quotaPC),sbp=parseN(s.soggBP);
-    const {spc,qf}=calcSogg(qbp,qpc,sbp);
-    return [
-      fmtDate(s.dataRilievo), s.piezometro||'',
-      qpc!==null?qpc.toFixed(2):'',
-      qbp!==null?qbp.toFixed(2):'',
-      s.fondoForo||'',
-      sbp!==null?sbp.toFixed(2):'',
-      spc!==null?spc.toFixed(2):'',
-      qf!==null?qf.toFixed(2):''
-    ];
-  };
-
-  if(fmt2==='csv'){
-    const bom='\uFEFF';
-    const lines=[hdrs.join('\t'),...rows.map(r=>makeRow(r).join('\t'))];
-    const blob=new Blob([bom+lines.join('\n')],{type:'text/csv;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const el=document.createElement('a');el.href=url;el.download='soggiacenza_falda_STA.csv';el.click();URL.revokeObjectURL(url);
-    toast('✓ CSV scaricato');
+  const mkRow=([,s])=>{const qbp=parseN(s.quotaBP),qpc=parseN(s.quotaPC),sbp=parseN(s.soggBP);const{spc,qf}=calcSogg(qbp,qpc,sbp);return[fmtDate(s.dataRilievo),s.piezometro||'',qpc!==null?qpc.toFixed(2):'',qbp!==null?qbp.toFixed(2):'',s.fondoForo||'',sbp!==null?sbp.toFixed(2):'',spc!==null?spc.toFixed(2):'',qf!==null?qf.toFixed(2):''];};
+  if(fmt==='csv'){
+    const blob=new Blob(['\uFEFF'+[hdrs.join('\t'),...rows.map(r=>mkRow(r).join('\t'))].join('\n')],{type:'text/csv;charset=utf-8'});
+    const el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download='soggiacenza_falda_STA.csv';el.click();toast('✓ CSV scaricato');
   } else {
-    const sito=rows[0][1].sito||'';
-    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<style>
-body{font-family:Arial,sans-serif;font-size:9pt}
-h2{font-size:11pt;margin-bottom:4pt}
-p{font-size:8pt;color:#555;margin-bottom:6pt}
-table{border-collapse:collapse;width:100%}
-th{background:#1a6fe0;color:#fff;padding:4pt 5pt;border:1px solid #888;font-size:8pt;text-align:center}
-td{padding:3pt 5pt;border:1px solid #ccc;font-size:8pt;text-align:center}
-td:nth-child(2){font-weight:bold}
-tr:nth-child(even) td{background:#f0f4fb}
-.calc{color:#0891b2}
-</style></head><body>
-<h2>Monitoraggio soggiacenza falda – ${sito}</h2>
-<p>Elaborazione STA Consulting S.r.l. – ${new Date().toLocaleDateString('it-IT')}<br>
-Formule: Sogg. p.c. = Sogg. b.p. + (Quota p.c. − Quota b.p.) &nbsp;|&nbsp; Quota falda = Quota b.p. − Sogg. b.p.</p>
-<table><thead><tr>${hdrs.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-<tbody>${rows.map(r=>{const vals=makeRow(r);return`<tr>${vals.map((v,i)=>`<td${i>=5?` class="calc"`:''}>` +v+`</td>`).join('')}</tr>`;}).join('')}</tbody></table>
-<p style="margin-top:6pt;font-size:7pt;color:#888">Colonne in blu = valori calcolati automaticamente. b.p. = bocca pozzo; p.c. = piano campagna.</p>
-</body></html>`;
-    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const el=document.createElement('a');el.href=url;el.download='soggiacenza_falda_STA.html';el.click();URL.revokeObjectURL(url);
-    toast('✓ Tabella HTML scaricata');
+    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:9pt}h2{font-size:11pt}table{border-collapse:collapse;width:100%}th{background:#1a6fe0;color:#fff;padding:4pt 5pt;border:1px solid #888;font-size:8pt;text-align:center}td{padding:3pt 5pt;border:1px solid #ccc;font-size:8pt;text-align:center}td:nth-child(2){font-weight:bold}tr:nth-child(even) td{background:#f0f4fb}.c{color:#0891b2}</style></head><body><h2>Soggiacenza falda – ${rows[0][1].sito||''}</h2><p style="font-size:8pt;color:#555">STA Consulting S.r.l. – ${new Date().toLocaleDateString('it-IT')}</p><table><thead><tr>${hdrs.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>{const v=mkRow(r);return`<tr>${v.map((x,i)=>`<td${i>=5?' class="c"':''}>` +x+`</td>`).join('')}</tr>`;}).join('')}</tbody></table></body></html>`;
+    const el=document.createElement('a');el.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));el.download='soggiacenza_falda_STA.html';el.click();toast('✓ HTML scaricato');
   }
 }
-
 function exportAnalisi(){
-  const fs=document.getElementById('exp-sito').value;
-  const da=document.getElementById('exp-da').value;
-  const a=document.getElementById('exp-a').value;
-  const fmt2=document.getElementById('exp-formato').value;
-  const rows=Object.entries(analisi).filter(([,an])=>{
-    if(fs&&an.sitoKey!==fs)return false;
-    if(da&&an.dataPrelievo&&an.dataPrelievo<da)return false;
-    if(a&&an.dataPrelievo&&an.dataPrelievo>a)return false;
-    return true;
-  }).sort((a,b)=>String(a[1].dataPrelievo).localeCompare(String(b[1].dataPrelievo)));
+  const fs=document.getElementById('exp-sito').value,da=document.getElementById('exp-da').value,a=document.getElementById('exp-a').value,fmt=document.getElementById('exp-formato').value;
+  const rows=Object.entries(analisi).filter(([,an])=>{if(fs&&an.sitoKey!==fs)return false;if(da&&an.dataPrelievo&&an.dataPrelievo<da)return false;if(a&&an.dataPrelievo&&an.dataPrelievo>a)return false;return true;}).sort((a,b)=>String(a[1].dataPrelievo).localeCompare(String(b[1].dataPrelievo)));
   if(!rows.length){toast('Nessun dato');return;}
   const allP=[...new Set(rows.flatMap(([,a])=>Object.keys(a.parametri||{})))].sort();
-  if(fmt2==='csv'){
-    const bom='\uFEFF';
-    const lines=[['Sito','Punto','Matrice','Data prelievo','Luogo',...allP].join('\t'),
-      ...rows.map(([,a])=>[a.sito||'',a.punto||'',a.matrice||'',a.dataPrelievo||'',a.luogo||'',...allP.map(p=>(a.parametri||{})[p]||'')].join('\t'))];
-    const blob=new Blob([bom+lines.join('\n')],{type:'text/csv;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const el=document.createElement('a');el.href=url;el.download='analisi_chimiche_STA.csv';el.click();URL.revokeObjectURL(url);
-    toast('✓ CSV scaricato');
+  if(fmt==='csv'){
+    const blob=new Blob(['\uFEFF'+[['Sito','Punto','Matrice','Data prelievo','Luogo',...allP].join('\t'),...rows.map(([,a])=>[a.sito||'',a.punto||'',a.matrice||'',a.dataPrelievo||'',a.luogo||'',...allP.map(p=>(a.parametri||{})[p]||'')].join('\t'))].join('\n')],{type:'text/csv;charset=utf-8'});
+    const el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download='analisi_chimiche_STA.csv';el.click();toast('✓ CSV scaricato');
   } else {
-    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<style>body{font-family:Arial,sans-serif;font-size:9pt}h2{font-size:11pt}table{border-collapse:collapse;width:100%}th{background:#1a6fe0;color:#fff;padding:3pt 5pt;border:1px solid #888;font-size:8pt}td{padding:3pt 5pt;border:1px solid #ccc;font-size:8pt}tr:nth-child(even) td{background:#f0f4fb}</style></head><body>
-<h2>Analisi chimiche – ${rows[0][1].sito||''}</h2>
-<p style="font-size:8pt;color:#555">STA Consulting S.r.l. – ${new Date().toLocaleDateString('it-IT')}</p>
-<table><thead><tr><th>Punto</th><th>Data prelievo</th>${allP.map(p=>`<th>${p}</th>`).join('')}</tr></thead>
-<tbody>${rows.map(([,a])=>`<tr><td><b>${a.punto||''}</b></td><td>${a.dataPrelievo||''}</td>${allP.map(p=>`<td>${(a.parametri||{})[p]||'n.d.'}</td>`).join('')}</tr>`).join('')}</tbody></table>
-</body></html>`;
-    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const el=document.createElement('a');el.href=url;el.download='analisi_chimiche_STA.html';el.click();URL.revokeObjectURL(url);
-    toast('✓ HTML scaricato');
+    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:9pt}table{border-collapse:collapse;width:100%}th{background:#1a6fe0;color:#fff;padding:3pt 5pt;border:1px solid #888;font-size:8pt}td{padding:3pt 5pt;border:1px solid #ccc;font-size:8pt}tr:nth-child(even) td{background:#f0f4fb}</style></head><body><h2>Analisi chimiche – ${rows[0][1].sito||''}</h2><p style="font-size:8pt;color:#555">STA Consulting S.r.l. – ${new Date().toLocaleDateString('it-IT')}</p><table><thead><tr><th>Punto</th><th>Data prelievo</th>${allP.map(p=>`<th>${p}</th>`).join('')}</tr></thead><tbody>${rows.map(([,a])=>`<tr><td><b>${a.punto||''}</b></td><td>${a.dataPrelievo||''}</td>${allP.map(p=>`<td>${(a.parametri||{})[p]||'n.d.'}</td>`).join('')}</tr>`).join('')}</tbody></table></body></html>`;
+    const el=document.createElement('a');el.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));el.download='analisi_chimiche_STA.html';el.click();toast('✓ HTML scaricato');
   }
 }
 
-// ── superamenti ──
+// ── SUPERAMENTI ──
 function renderSuperamenti(){
   const fs=document.getElementById('sup-filter-sito').value;
   const tb=document.getElementById('sup-tbody');
@@ -848,84 +623,40 @@ function renderSuperamenti(){
   tb.innerHTML=rows.map(([k,s])=>{const ratio=s.csc>0?(s.valore/s.csc).toFixed(1):'–';const rc=ratio>10?'err':ratio>2?'warn':'ok';return`<tr><td>${s.sito}</td><td>${s.punto||'–'}</td><td><b>${s.parametro}</b></td><td>${s.valore}</td><td>${s.csc}</td><td><span class="badge ${rc}">${ratio}×</span></td><td>${s.matrice}</td><td>${fmtDate(s.data)}</td><td class="act-row"><button onclick="editItem('superamento','${k}')">✏</button><button class="danger" onclick="delItem('superamento','${k}')">✕</button></td></tr>`;}).join('');
 }
 
-// ── log ──
+// ── LOG ──
 function renderLog(){const tb=document.getElementById('log-tbody');const rows=Object.entries(logItems).sort((a,b)=>b[1].ts-a[1].ts).slice(0,100);if(!rows.length){tb.innerHTML='<tr><td colspan="4" class="empty">Nessuna attività</td></tr>';return;}tb.innerHTML=rows.map(([,l])=>`<tr><td style="font-size:11px;white-space:nowrap">${fmtDT(l.ts)}</td><td><b>${l.utente}</b></td><td>${l.azione}</td><td>${l.dettaglio}</td></tr>`).join('');}
-window.clearLog=()=>{if(!confirm('Svuotare il log?'))return;remove(ref(db,'log'));};
+window.clearLog=()=>{if(!confirm('Svuotare?'))return;remove(ref(db,'log'));};
 
-// ── filters ──
+// ── FILTERS ──
 function updateFilters(){
   const opts='<option value="">Tutti i siti</option>'+Object.entries(siti).map(([k,s])=>`<option value="${k}">${s.nome}</option>`).join('');
-  ['analisi-filter-sito','sogg-filter-sito','sup-filter-sito','exp-sito'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const cur=el.value;el.innerHTML=opts;el.value=cur;});
-  const ms=document.getElementById('mis-sito');if(ms){const c=ms.value;ms.innerHTML='<option value="">– Seleziona –</option>'+Object.entries(siti).map(([k,v])=>`<option value="${k}">${v.nome}</option>`).join('');ms.value=c;}
+  ['analisi-filter-sito','sogg-filter-sito','sup-filter-sito','exp-sito'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const c=el.value;el.innerHTML=opts;el.value=c;});
 }
 
-// ── modal generico ──
+// ── MODAL GENERICO ──
 const FORMS={
-  sito:{title:'Sito contaminato',fields:[
-    {n:'codice',l:'Codice sito',r:true},{n:'nome',l:'Nome sito',r:true,full:true},
-    {n:'comune',l:'Comune'},{n:'provincia',l:'Provincia'},
-    {n:'tipo',l:'Tipo sito',type:'sel',opts:['Stazione carburante','Sito industriale','Sito militare','Area portuale','Discarica','Altro']},
-    {n:'stato',l:'Stato',type:'sel',opts:['Attivo','In bonifica','Monitoraggio','Chiuso']},
-    {n:'responsabile',l:'Responsabile',full:true},{n:'note',l:'Note',type:'area',full:true}
-  ]},
-  superamento:{title:'Superamento CSC',fields:[
-    {n:'sitoKey',l:'Sito',r:true,type:'sito-sel',full:true},
-    {n:'punto',l:'Punto',r:true},{n:'parametro',l:'Parametro',r:true},
-    {n:'matrice',l:'Matrice',type:'sel',opts:['Suolo','Acque sotterranee','Gas interstiziale'],r:true},
-    {n:'valore',l:'Valore misurato',type:'number',r:true},
-    {n:'csc',l:'CSC (Tab. 1/2 All. 5)',type:'number',r:true},
-    {n:'unita',l:'Unità',type:'sel',opts:['µg/L','mg/kg SS','µg/m³','mg/L']},
-    {n:'data',l:'Data campionamento',type:'date',r:true},
-    {n:'note',l:'Note',type:'area',full:true}
-  ]}
+  sito:{title:'Sito contaminato',fields:[{n:'codice',l:'Codice sito',r:true},{n:'nome',l:'Nome sito',r:true,full:true},{n:'comune',l:'Comune'},{n:'provincia',l:'Provincia'},{n:'tipo',l:'Tipo sito',type:'sel',opts:['Stazione carburante','Sito industriale','Sito militare','Area portuale','Discarica','Altro']},{n:'stato',l:'Stato',type:'sel',opts:['Attivo','In bonifica','Monitoraggio','Chiuso']},{n:'responsabile',l:'Responsabile',full:true},{n:'note',l:'Note',type:'area',full:true}]},
+  superamento:{title:'Superamento CSC',fields:[{n:'sitoKey',l:'Sito',r:true,type:'sito-sel',full:true},{n:'punto',l:'Punto',r:true},{n:'parametro',l:'Parametro',r:true},{n:'matrice',l:'Matrice',type:'sel',opts:['Suolo','Acque sotterranee','Gas interstiziale'],r:true},{n:'valore',l:'Valore misurato',type:'number',r:true},{n:'csc',l:'CSC (Tab. 1/2 All. 5)',type:'number',r:true},{n:'unita',l:'Unità',type:'sel',opts:['µg/L','mg/kg SS','µg/m³','mg/L']},{n:'data',l:'Data campionamento',type:'date',r:true},{n:'note',l:'Note',type:'area',full:true}]}
 };
 let currentModal=null,editingKey=null;
 window.openModal=type=>{editingKey=null;currentModal=type;const f=FORMS[type];document.getElementById('modal-title').textContent='+ '+f.title;renderForm(f,{});document.getElementById('modal-bg').style.display='flex';};
 window.editItem=(type,key)=>{editingKey=key;currentModal=type;const store={sito:siti,superamento:superamenti}[type];const f=FORMS[type];document.getElementById('modal-title').textContent='✏ Modifica '+f.title;renderForm(f,store[key]||{});document.getElementById('modal-bg').style.display='flex';};
-function renderForm(f,data){const sitoOpts=Object.entries(siti).map(([k,s])=>`<option value="${k}" ${data.sitoKey===k?'selected':''}>${s.nome}</option>`).join('');document.getElementById('modal-body').innerHTML=`<div class="form-grid">${f.fields.map(fd=>{const cls=fd.full?'full':'';const val=data[fd.n]||'';let inp;if(fd.type==='sel')inp=`<select name="${fd.n}">${fd.opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;else if(fd.type==='sito-sel')inp=`<select name="${fd.n}"><option value="">–</option>${sitoOpts}</select>`;else if(fd.type==='area')inp=`<textarea name="${fd.n}">${val}</textarea>`;else if(fd.type==='date')inp=`<input type="date" name="${fd.n}" value="${val}">`;else if(fd.type==='number')inp=`<input type="number" step="any" name="${fd.n}" value="${val}">`;else inp=`<input type="text" name="${fd.n}" value="${val}">`;return`<label class="${cls}">${fd.l}${fd.r?' *':''} ${inp}</label>`;}).join('')}</div>`;}
+function renderForm(f,data){
+  const sitoOpts=Object.entries(siti).map(([k,s])=>`<option value="${k}" ${data.sitoKey===k?'selected':''}>${s.nome}</option>`).join('');
+  document.getElementById('modal-body').innerHTML=`<div class="form-grid">${f.fields.map(fd=>{const cls=fd.full?'full':'';const val=data[fd.n]||'';let inp;if(fd.type==='sel')inp=`<select name="${fd.n}">${fd.opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;else if(fd.type==='sito-sel')inp=`<select name="${fd.n}"><option value="">–</option>${sitoOpts}</select>`;else if(fd.type==='area')inp=`<textarea name="${fd.n}">${val}</textarea>`;else if(fd.type==='date')inp=`<input type="date" name="${fd.n}" value="${val}">`;else if(fd.type==='number')inp=`<input type="number" step="any" name="${fd.n}" value="${val}">`;else inp=`<input type="text" name="${fd.n}" value="${val}">`;return`<label class="${cls}">${fd.l}${fd.r?' *':''} ${inp}</label>`;}).join('')}</div>`;
+}
 window.closeModal=()=>{document.getElementById('modal-bg').style.display='none';};
-window.saveModal=()=>{const data={};document.getElementById('modal-body').querySelectorAll('[name]').forEach(el=>{data[el.name]=el.value.trim();});const type=currentModal;const path={sito:'siti',superamento:'superamenti'}[type];if(data.sitoKey&&siti[data.sitoKey])data.sito=siti[data.sitoKey].nome;if(editingKey){update(ref(db,path+'/'+editingKey),data);addLog('Modifica',FORMS[type].title);}else{push(ref(db,path),data);addLog('Inserimento',FORMS[type].title+': '+(data.nome||data.parametro||''));}closeModal();toast('✓ Salvato');};
-window.delItem=(type,key)=>{if(!confirm('Eliminare?'))return;remove(ref(db,{sito:'siti',superamento:'superamenti'}[type]+'/'+key));addLog('Eliminazione',type+': '+key);toast('Eliminato');};
+window.saveModal=()=>{
+  const data={};document.getElementById('modal-body').querySelectorAll('[name]').forEach(el=>{data[el.name]=el.value.trim();});
+  const type=currentModal;const path={sito:'siti',superamento:'superamenti'}[type];
+  if(data.sitoKey&&siti[data.sitoKey])data.sito=siti[data.sitoKey].nome;
+  if(editingKey)update(ref(db,path+'/'+editingKey),data);
+  else push(ref(db,path),data);
+  addLog(editingKey?'Modifica':'Inserimento',FORMS[type].title+': '+(data.nome||data.parametro||''));
+  closeModal();toast('✓ Salvato');
+};
+window.delItem=(type,key)=>{if(!confirm('Eliminare?'))return;remove(ref(db,{sito:'siti',superamento:'superamenti'}[type]+'/'+key));addLog('Eliminazione',type);toast('Eliminato');};
 window.showTab=(tab,btn)=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');};
-
-// ── AUTH ──
-const loginScreen = document.getElementById('login-screen');
-const loginErr = document.getElementById('login-err');
-
-onAuthStateChanged(auth, user => {
-  if(user){
-    loginScreen.style.display='none';
-    document.getElementById('app').style.display='flex';
-    document.getElementById('user-label').textContent = user.email;
-    startListeners();
-    setPresence();
-  } else {
-    loginScreen.style.display='flex';
-    document.getElementById('app').style.display='none';
-  }
-});
-
-window.doLogin = async () => {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  loginErr.textContent='';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e) {
-    loginErr.textContent = 'Email o password errati.';
-  }
-};
-
-window.doLogout = async () => {
-  await signOut(auth);
-};
-
-document.getElementById('login-pass').addEventListener('keydown', e => {
-  if(e.key==='Enter') doLogin();
-});
-
-startListeners();
-setPresence();
 </script>
 </body>
 </html>
